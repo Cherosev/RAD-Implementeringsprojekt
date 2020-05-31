@@ -27,7 +27,7 @@ namespace RAD_Implementeringsprojekt
                 var streamer = BitStreamcs.CreateStream(1000000, i);
                 table.hashKeyShift(streamer);
                 timestamp = timer.ElapsedMilliseconds;
-                Console.WriteLine($"Shift: Time for l={i}:   {timestamp} ms");
+                Console.WriteLine($"Shift: Time for l={i}:   {timestamp} ms      Sum: {table.sumHxShift}");
                 timeSumShift += timestamp;
                 timer.Stop();
                 timer.Reset();
@@ -43,7 +43,7 @@ namespace RAD_Implementeringsprojekt
                 var streamer = BitStreamcs.CreateStream(1000000, i);
                 table.hashKeyMod(streamer);
                 timestamp = timer.ElapsedMilliseconds;
-                Console.WriteLine($"Mod: Time for l={i}:   {timestamp} ms");
+                Console.WriteLine($"Mod: Time for l={i}:   {timestamp} ms      Sum: {table.sumHxMod}");
                 timeSumMod += timestamp;
                 timer.Stop();
                 timer.Reset();
