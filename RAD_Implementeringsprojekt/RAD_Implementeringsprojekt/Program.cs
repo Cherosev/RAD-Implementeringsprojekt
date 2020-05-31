@@ -8,7 +8,10 @@ namespace RAD_Implementeringsprojekt
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            var test = Hashing.MultiplyShift((UInt64) 4, (UInt64) 5, 61);
+            // (a*b)>>(64-l) 
+            // (4*5)>>(64-61) = 20 >> 3 = 2
+            Console.WriteLine($"MultiplyShift (a=5, x=4, l=61) gives 2: {test == 2}");
         }
     }
 }
