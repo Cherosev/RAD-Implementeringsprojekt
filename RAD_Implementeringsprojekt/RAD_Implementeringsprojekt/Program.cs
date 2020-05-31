@@ -13,9 +13,42 @@ namespace RAD_Implementeringsprojekt
             // (4*5)>>(64-61) = 20 >> 3 = 2
             Console.WriteLine($"MultiplyShift (a=5, x=4, l=61) gives 2: {test == 2}");
 
-            var table = new HashTable();
-            Console.WriteLine($"{table.a}");
-            Console.WriteLine($"{table.b}");
+            var timer = System.Diagnostics.Stopwatch.StartNew();
+            long timestamp = 0;
+
+            Console.WriteLine(" --- Testing time for MultiplyShift ---");
+            HashTable table = new HashTable();
+            // Console.WriteLine($"{table.a}");
+
+            long timeSumShift = 0;
+            for (int i = 5; i < 50; i += 2)
+            {
+                timer.Start();
+                var streamer = BitStreamcs.CreateStream(1000000, i);
+                table.hashKeyShift(streamer);
+                timestamp = timer.ElapsedMilliseconds;
+                Console.WriteLine($"Shift: Time for l={i}:   {timestamp} ms");
+                timeSumShift += timestamp;
+                timer.Stop();
+                timer.Reset();
+            }
+            Console.WriteLine($" >> Total time for shift: {timeSumShift} ms");
+
+
+            long timeSumMod = 0;
+            Console.WriteLine(" --- Testing time for Mod ---");
+            for (int i = 5; i < 50; i += 2)
+            {
+                timer.Start();
+                var streamer = BitStreamcs.CreateStream(1000000, i);
+                table.hashKeyMod(streamer);
+                timestamp = timer.ElapsedMilliseconds;
+                Console.WriteLine($"Mod: Time for l={i}:   {timestamp} ms");
+                timeSumMod += timestamp;
+                timer.Stop();
+                timer.Reset();
+            }
+            Console.WriteLine($" >> Total time for mod: {timeSumMod} ms");
         }
     }
 }

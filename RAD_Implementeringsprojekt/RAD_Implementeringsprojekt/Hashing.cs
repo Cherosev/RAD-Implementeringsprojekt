@@ -13,8 +13,7 @@ namespace RAD_Implementeringsprojekt
         {
             // Bound checks
             if( a % 2 != 1 || l <= 0 || l >= 64) {
-                Console.WriteLine("Multiply shift error");
-                return (UInt64) 0;
+                throw new System.Exception($"Multiply shift error. Args: l={l}, a={a}, x={x}");
             }
 
             var mult = a * x;
@@ -24,7 +23,7 @@ namespace RAD_Implementeringsprojekt
         }
 
         // a and b are less than p, and l is a positive integer less than 64.
-        public static BigInteger Multiply_mod_prime(UInt64 x, UInt64 a, UInt64 b, UInt64 l)
+        public static BigInteger Multiply_mod_prime(UInt64 x, UInt64 a, UInt64 b, Int32 l)
         {
             // TODO: Ikke inspireret af Exercise 2.7 og 2.8 fra hasingnoterne. Kan sikker optimeres.
             BigInteger p = (2 ^ 89) - 1;
