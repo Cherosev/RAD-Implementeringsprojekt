@@ -19,19 +19,18 @@ namespace RAD_Implementeringsprojekt {
         public hashFunctionDelegate hashFunction;
         public LinkedList<(ulong, int)>[] hashTable;
 
-        // Constructor
+        /// Constructor. Takes a hashfunction and the amount of bits in the keys.
         public HashTable(hashFunctionDelegate h, int hashSize) 
         {
             a = getRandomULong();
             b = getRandomULong();
             hashFunction = h;
             l = hashSize;
-            var tableSize = (int) Math.Pow(2, hashSize);
+            var tableSize = (ulong) Math.Pow(2, hashSize);
             hashTable = new LinkedList<(ulong, int)>[(tableSize)];
-
-            Console.WriteLine(hashTable.Length);
         }
 
+        /// Finds index of a key by running the tables hashfunction on it.
         public ulong FindIndex(ulong x)
         {
             return hashFunction(x, a, b, l);
@@ -52,7 +51,6 @@ namespace RAD_Implementeringsprojekt {
             }
             return 0;
         }
-
         public void set(ulong x, int v)
         {
             ulong index = FindIndex(x);
@@ -114,7 +112,7 @@ namespace RAD_Implementeringsprojekt {
 
         public void hashKeysTimeTest(IEnumerable<Tuple<ulong, int>> stream)
         {
-            ulong hashSum = 0;
+            BigInteger hashSum = 0;
             foreach(var x in stream)
             {
                 hashSum += hashFunction(x.Item1, a, b, l);
@@ -127,7 +125,6 @@ namespace RAD_Implementeringsprojekt {
             Random randomGenerator = new Random();
             Byte[] byteArr = new Byte[8];
             randomGenerator.NextBytes(byteArr);
-            var bitArr = new BitArray(byteArr);
 
             // Ensure ULong is uneven
             var ret = BitConverter.ToUInt64(byteArr, 0);

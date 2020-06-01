@@ -2,6 +2,7 @@
 using System.Numerics;
 using System.Collections.Generic;
 using System.Text;
+using System.Runtime.CompilerServices;
 
 namespace RAD_Implementeringsprojekt
 {
@@ -27,12 +28,24 @@ namespace RAD_Implementeringsprojekt
         // a and b are less than p, and l is a positive integer less than 64.
         public static ulong Multiply_mod_prime(UInt64 x, UInt64 a, UInt64 b, Int32 l)
         {
-            // TODO: Ikke inspireret af Exercise 2.7 og 2.8 fra hasingnoterne. Kan sikker optimeres.
-            ulong p = (ulong) Math.Pow(2, 89) - 1;
-            ulong mult = (a * x + b);
-            ulong firstMod = mult % p;
-            ulong result = firstMod % (ulong)(2 ^ l);
             
+            int q = 89;
+            ulong p = (ulong) Math.Pow(2, q) - 1;
+            ulong mult = (a * x + b);
+            ulong firstMod = (mult&p)+(mult>>q);
+            if (firstMod >= p) firstMod -= p;
+
+            ulong result = firstMod % (ulong)Math.Pow(2,l);
+            
+            //FØR 
+            //ulong p = (ulong) Math.Pow(2, 89) - 1;
+            //ulong mult = (a * x + b);
+            //ulong firstMod = mult % p;
+            //ulong result = firstMod % (ulong)(2 ^ l);
+            
+
+
+
             return result;
         }
 
