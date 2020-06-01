@@ -25,8 +25,9 @@ namespace RAD_Implementeringsprojekt {
             a = getRandomULong();
             b = getRandomULong();
             hashFunction = h;
-            l = hashSize;
-            var tableSize = (ulong) Math.Pow(2, hashSize);
+            // l > 29 results in array dimensions exceed supported range
+            l = Math.Min(hashSize, 21);
+            var tableSize = (ulong) Math.Pow(2, l);
             hashTable = new LinkedList<(ulong, int)>[(tableSize)];
         }
 
