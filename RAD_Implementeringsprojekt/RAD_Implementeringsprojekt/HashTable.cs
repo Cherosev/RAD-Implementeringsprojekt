@@ -12,38 +12,49 @@ namespace RAD_Implementeringsprojekt {
 
         public int l;
 
-        public BigInteger sumHxShift = 0;
-        public BigInteger sumHxMod = 0;
+        public delegate ulong hashFunctionDelegate(UInt64 x, UInt64 a, UInt64 b, Int32 l);
 
+
+        public hashFunctionDelegate hashFunction;
+        public List<(ulong, int)>[] hashTable;
 
         // Constructor
-        public HashTable() 
+        public HashTable(hashFunctionDelegate h, int hashSize) 
         {
             a = getRandomULong();
             b = getRandomULong();
-
-            Random rnd = new Random();
-            l = rnd.Next(1,63);
+            hashFunction = h;
+            l = hashSize;
+            hashTable = new List<(ulong, int)>[l];
         }
 
-        public void hashKeyShift(IEnumerable<Tuple<ulong, int>> stream)
+        // public LinkedList<(ulong, int)> createList() 
+        // {
+
+        // }
+
+        public ulong get(ulong x)
         {
-            sumHxShift = 0;
-            foreach(var x in stream)
-            {
-                sumHxShift += Hashing.MultiplyShift(x.Item1, a, l);
-            }
-            //Console.WriteLine($"Sum of hashed vals (key shift): {sumHxShift}");
+            return 0;
+        }
+        public void set(ulong x, int v)
+        {
+
+        }
+        public void increment(ulong x, ulong d)
+        {
+
         }
 
-        public void hashKeyMod(IEnumerable<Tuple<ulong, int>> stream)
+
+        public void hashKeysTimeTest(IEnumerable<Tuple<ulong, int>> stream)
         {
-            sumHxMod = 0;
+            ulong hashSum = 0;
             foreach(var x in stream)
             {
-                sumHxMod += Hashing.Multiply_mod_prime(x.Item1, a, b, l);
+                hashSum += hashFunction(x.Item1, a, b, l);
             }
-            //Console.WriteLine($"Sum of hashed vals (mod): {sumHxMod}");
+            Console.WriteLine($"Sum of hashed vals: {hashSum}");
         }
 
         private ulong getRandomULong()

@@ -8,26 +8,27 @@ namespace RAD_Implementeringsprojekt
     {
         static void Main(string[] args)
         {
-            var test = Hashing.MultiplyShift((UInt64) 4, (UInt64) 5, 61);
+            var test = Hashing.MultiplyShift((UInt64) 4, (UInt64) 5, 0,61);
             // (a*b)>>(64-l) 
             // (4*5)>>(64-61) = 20 >> 3 = 2
             Console.WriteLine($"MultiplyShift (a=5, x=4, l=61) gives 2: {test == 2}");
 
             var timer = System.Diagnostics.Stopwatch.StartNew();
             long timestamp = 0;
+            var n = 1000000;
 
-            Console.WriteLine(" --- Testing time for MultiplyShift ---");
-            HashTable table = new HashTable();
-            // Console.WriteLine($"{table.a}");
+            Console.WriteLine($" --- Testing time for MultiplyShift. Hashing {n} values---");
+            HashTable table;
 
             long timeSumShift = 0;
             for (int i = 5; i < 50; i += 2)
             {
+                table = new HashTable(Hashing.Multiply_mod_prime, i);
                 timer.Start();
-                var streamer = BitStreamcs.CreateStream(1000000, i);
-                table.hashKeyShift(streamer);
+                var streamer = BitStreamcs.CreateStream(n, i);
+                table.hashKeysTimeTest(streamer);
                 timestamp = timer.ElapsedMilliseconds;
-                Console.WriteLine($"Shift: Time for l={i}:   {timestamp} ms      Sum: {table.sumHxShift}");
+                Console.WriteLine($"Shift: Time for l={i}:   {timestamp} ms");
                 timeSumShift += timestamp;
                 timer.Stop();
                 timer.Reset();
@@ -35,15 +36,17 @@ namespace RAD_Implementeringsprojekt
             Console.WriteLine($" >> Total time for shift: {timeSumShift} ms");
 
 
+            
             long timeSumMod = 0;
-            Console.WriteLine(" --- Testing time for Mod ---");
+            Console.WriteLine($" --- Testing time for Mod. Hashing {n} values ---");
             for (int i = 5; i < 50; i += 2)
             {
+                table = new HashTable(Hashing.Multiply_mod_prime, i);
                 timer.Start();
-                var streamer = BitStreamcs.CreateStream(1000000, i);
-                table.hashKeyMod(streamer);
+                var streamer = BitStreamcs.CreateStream(n, i);
+                table.hashKeysTimeTest(streamer);
                 timestamp = timer.ElapsedMilliseconds;
-                Console.WriteLine($"Mod: Time for l={i}:   {timestamp} ms      Sum: {table.sumHxMod}");
+                Console.WriteLine($"Mod: Time for l={i}:   {timestamp} ms");
                 timeSumMod += timestamp;
                 timer.Stop();
                 timer.Reset();
