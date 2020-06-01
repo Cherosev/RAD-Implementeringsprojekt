@@ -26,7 +26,10 @@ namespace RAD_Implementeringsprojekt {
             b = getRandomULong();
             hashFunction = h;
             l = hashSize;
-            hashTable = new LinkedList<(ulong, int)>[l];
+            var tableSize = (int) Math.Pow(2, hashSize);
+            hashTable = new LinkedList<(ulong, int)>[(tableSize)];
+
+            Console.WriteLine(hashTable.Length);
         }
 
         public ulong FindIndex(ulong x)
@@ -37,12 +40,12 @@ namespace RAD_Implementeringsprojekt {
         public int get(ulong x)
         {
             ulong index = FindIndex(x);
-
+            //Console.WriteLine($"Key {x} is expected to be found at index {index}");
             var list = hashTable[index];
-            if(list == null) return 0;
-            
+            if  (list == null) return 0;
+
             var node = list.First;
-            while (node.Next != null)
+            while (node != null)
             {
                 if(node.Value.Item1 == x) return node.Value.Item2;
                 node = node.Next;
@@ -54,16 +57,19 @@ namespace RAD_Implementeringsprojekt {
         {
             ulong index = FindIndex(x);
 
+            //Console.WriteLine($"Key {x} will be stored at index {index}");
+
             var list = hashTable[index];
             if (list == null)
             {
                 list = new LinkedList<(ulong, int)>();
                 list.AddFirst((x, v));
+                hashTable[index] = list;
                 return;
             }
 
             var node = list.First;
-            while (node.Next != null)
+            while (node != null)
             {
                 if (node.Value.Item1 == x)
                 {
@@ -85,12 +91,13 @@ namespace RAD_Implementeringsprojekt {
             {
                 list = new LinkedList<(ulong, int)>();
                 list.AddFirst((x, d));
+                hashTable[index] = list;
                 return;
             }
 
             var node = list.First;
             // Itterate trough linked list.
-            while (node.Next != null)
+            while (node != null)
             {
                 if (node.Value.Item1 == x)
                 {

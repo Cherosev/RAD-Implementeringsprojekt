@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace RAD_Implementeringsprojekt
 {
@@ -20,44 +21,67 @@ namespace RAD_Implementeringsprojekt
             Console.WriteLine($" --- Testing time for MultiplyShift. Hashing {n} values---");
             HashTable table;
 
-            long timeSumShift = 0;
-            for (int i = 5; i < 50; i += 2)
-            {
-                table = new HashTable(Hashing.MultiplyShift, i);
-                timer.Start();
-                var streamer = BitStreamcs.CreateStream(n, i);
-                table.hashKeysTimeTest(streamer);
-                timestamp = timer.ElapsedMilliseconds;
-                Console.WriteLine($"Shift: Time for l={i}:   {timestamp} ms");
-                timeSumShift += timestamp;
-                timer.Stop();
-                timer.Reset();
-            }
-            Console.WriteLine($" >> Total time for shift: {timeSumShift} ms");
+            #region simpleTests
+            // long timeSumShift = 0;
+            // for (int i = 5; i < 50; i += 2)
+            // {
+            //     table = new HashTable(Hashing.MultiplyShift, i);
+            //     timer.Start();
+            //     var streamer = BitStreamcs.CreateStream(n, i);
+            //     table.hashKeysTimeTest(streamer);
+            //     timestamp = timer.ElapsedMilliseconds;
+            //     Console.WriteLine($"Shift: Time for l={i}:   {timestamp} ms");
+            //     timeSumShift += timestamp;
+            //     timer.Stop();
+            //     timer.Reset();
+            // }
+            // Console.WriteLine($" >> Total time for shift: {timeSumShift} ms");
 
 
-            
+
             long timeSumMod = 0;
-            Console.WriteLine($" --- Testing time for Mod. Hashing {n} values ---");
-            for (int i = 5; i < 50; i += 2)
+            // Console.WriteLine($" --- Testing time for Mod. Hashing {n} values ---");
+            // for (int i = 5; i < 50; i += 2)
+            // {
+            //     table = new HashTable(Hashing.Multiply_mod_prime, i);
+            //     timer.Start();
+            //     var streamer = BitStreamcs.CreateStream(n, i);
+            //     table.hashKeysTimeTest(streamer);
+            //     timestamp = timer.ElapsedMilliseconds;
+            //     Console.WriteLine($"Mod: Time for l={i}:   {timestamp} ms");
+            //     timeSumMod += timestamp;
+            //     timer.Stop();
+            //     timer.Reset();
+            // }
+            // Console.WriteLine($" >> Total time for mod: {timeSumMod} ms");
+            #endregion
+            #region GetSetTesting
+            var getSetTestTable = new HashTable(Hashing.MultiplyShift, 6);
+            var getSetStreamer = BitStreamcs.CreateStream(50, 6).ToList();
+
+            foreach (var x in getSetStreamer)
             {
-                table = new HashTable(Hashing.Multiply_mod_prime, i);
-                timer.Start();
-                var streamer = BitStreamcs.CreateStream(n, i);
-                table.hashKeysTimeTest(streamer);
-                timestamp = timer.ElapsedMilliseconds;
-                Console.WriteLine($"Mod: Time for l={i}:   {timestamp} ms");
-                timeSumMod += timestamp;
-                timer.Stop();
-                timer.Reset();
+                //Console.WriteLine($" >> Adding value: {x} to table.");
+                getSetTestTable.set(x.Item1, x.Item2);
             }
-            Console.WriteLine($" >> Total time for mod: {timeSumMod} ms");
+            foreach (var x in getSetStreamer)
+            {
+                //Console.WriteLine($" >> Adding value: {x} to table.");
+                getSetTestTable.set(x.Item1, 0);
+            }
 
-            // Get-set test
-            //var getSetTestTable = new HashTable(Hashing.MultiplyShift, 5);
+            foreach (var x in getSetStreamer)
+            {
+                //Console.WriteLine($" >> Incrementing value: {x}.");
+                getSetTestTable.increment(x.Item1, 1);
+            }
 
-
-            // Get-set test
+            foreach (var x in getSetStreamer)
+            {
+                var check = getSetTestTable.get(x.Item1);
+                Console.WriteLine($" >> Searching for value: {x}.   Got {check}");
+            }
+            #endregion
         }
     }
 }
