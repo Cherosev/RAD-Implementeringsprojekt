@@ -23,7 +23,7 @@ namespace RAD_Implementeringsprojekt
             long timeSumShift = 0;
             for (int i = 5; i < 50; i += 2)
             {
-                table = new HashTable(Hashing.Multiply_mod_prime, i);
+                table = new HashTable(Hashing.MultiplyShift, i);
                 timer.Start();
                 var streamer = BitStreamcs.CreateStream(n, i);
                 table.hashKeysTimeTest(streamer);
@@ -52,6 +52,12 @@ namespace RAD_Implementeringsprojekt
                 timer.Reset();
             }
             Console.WriteLine($" >> Total time for mod: {timeSumMod} ms");
+
+            // Get-set test
+            //var getSetTestTable = new HashTable(Hashing.MultiplyShift, 5);
+
+
+            // Get-set test
         }
     }
 }

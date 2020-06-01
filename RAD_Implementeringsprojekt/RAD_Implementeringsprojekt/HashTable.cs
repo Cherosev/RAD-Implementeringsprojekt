@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
@@ -16,7 +17,7 @@ namespace RAD_Implementeringsprojekt {
 
 
         public hashFunctionDelegate hashFunction;
-        public List<(ulong, int)>[] hashTable;
+        public LinkedList<(ulong, int)>[] hashTable;
 
         // Constructor
         public HashTable(hashFunctionDelegate h, int hashSize) 
@@ -25,27 +26,84 @@ namespace RAD_Implementeringsprojekt {
             b = getRandomULong();
             hashFunction = h;
             l = hashSize;
-            hashTable = new List<(ulong, int)>[l];
+            hashTable = new LinkedList<(ulong, int)>[l];
         }
 
-        // public LinkedList<(ulong, int)> createList() 
-        // {
-
-        // }
-
-        public ulong get(ulong x)
+        public ulong FindIndex(ulong x)
         {
+            return hashFunction(x, a, b, l);
+        }
+
+        public int get(ulong x)
+        {
+            ulong index = FindIndex(x);
+
+            var list = hashTable[index];
+            if(list == null) return 0;
+            
+            var node = list.First;
+            while (node.Next != null)
+            {
+                if(node.Value.Item1 == x) return node.Value.Item2;
+                node = node.Next;
+            }
             return 0;
         }
+
         public void set(ulong x, int v)
         {
+            ulong index = FindIndex(x);
 
+            var list = hashTable[index];
+            if (list == null)
+            {
+                list = new LinkedList<(ulong, int)>();
+                list.AddFirst((x, v));
+                return;
+            }
+
+            var node = list.First;
+            while (node.Next != null)
+            {
+                if (node.Value.Item1 == x)
+                {
+                    node.Value = (x,v);
+                    return;
+                }
+                node = node.Next;
+            }
+            list.AddLast((x,  v));
         }
-        public void increment(ulong x, ulong d)
+        public void increment(ulong x, int d)
         {
+            ulong index = FindIndex(x);
 
+            // Find linked list.
+            var list = hashTable[index];
+            // Check that it is not empty.
+            if (list == null)
+            {
+                list = new LinkedList<(ulong, int)>();
+                list.AddFirst((x, d));
+                return;
+            }
+
+            var node = list.First;
+            // Itterate trough linked list.
+            while (node.Next != null)
+            {
+                if (node.Value.Item1 == x)
+                {
+                    // Increment value
+                    node.Value = (x, node.Value.Item2 + d);
+                    return;
+                }
+                // Next node
+                node = node.Next;
+            }
+            // Element not found. Add it.
+            list.AddLast((x, d));
         }
-
 
         public void hashKeysTimeTest(IEnumerable<Tuple<ulong, int>> stream)
         {
@@ -67,10 +125,7 @@ namespace RAD_Implementeringsprojekt {
             // Ensure ULong is uneven
             var ret = BitConverter.ToUInt64(byteArr, 0);
             if( ret % 2 != 1) ret++;
-            return ret  ;
+            return ret;
         }
-
-
     }
-
 }
