@@ -3,6 +3,7 @@ using System.Numerics;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace RAD_Implementeringsprojekt
 {
@@ -22,7 +23,7 @@ namespace RAD_Implementeringsprojekt
         public ulong b_value;
         public int   l_value;
         public ulong l_squared;
-        public ulong p_value;
+        public BigInteger p_value;
         public int   q_value;
         public int   k = 4;
 
@@ -34,7 +35,7 @@ namespace RAD_Implementeringsprojekt
         public ulong a;
         public ulong b;
 
-        public delegate ulong hashFunctionDelegate(UInt64 x);
+        public delegate ulong hashFunctionDelegate(ulong x);
         public hashFunctionDelegate h;
 
 
@@ -44,7 +45,7 @@ namespace RAD_Implementeringsprojekt
         {   
             l_value = l;
             q_value = 89;
-            p_value = (ulong) Math.Pow(2, q_value) - 1;
+            p_value = (BigInteger) Math.Pow(2, q_value) - 1;
             switch (hashFun)
             {
                 case Hashfunctions.MultiplyShift:
@@ -72,7 +73,7 @@ namespace RAD_Implementeringsprojekt
         }
 
         // A is a random odd 64-bit integer, and l is a postive integer lower than 64.
-        public UInt64 MultiplyShift(UInt64 x)
+        public ulong MultiplyShift(UInt64 x)
         {
             // Bound checks
             if( a_value % 2 != 1 || l_value <= 0 || l_value >= 64) {
@@ -90,18 +91,23 @@ namespace RAD_Implementeringsprojekt
         // a and b are less than p, and l is a positive integer less than 64.
         public ulong Multiply_mod_prime(UInt64 x)
         {
-            
-            ulong mult = (a_value * x + b_value);
-            ulong firstMod = (mult&p_value)+(mult>>q_value);
+            //var timer = System.Diagnostics.Stopwatch.StartNew();
+            //timer.Start();
+            BigInteger mult = (a_value * x + b_value);
+            BigInteger firstMod = (mult & p_value) + (mult >> q_value);
             if (firstMod >= p_value) firstMod -= p_value;
+            //var timestamp1 = timer.ElapsedMilliseconds;
 
-            ulong result = firstMod % l_squared;
+            ulong result = (ulong)(firstMod % (BigInteger)l_squared);
+            //var timerstamp2 = timer.ElapsedMilliseconds;
+
+            //Console.WriteLine($"ts1: {timestamp1}. ts2: {timerstamp2}");
             return result;
         }
         
         public ulong fourUniversal(UInt64 x)
         {
-            ulong y = a_0;
+            BigInteger y = a_0;
             y = y*x + a_1;                     // Update y
             y = (y&p_value) + (y>>l_value);    // Update y
             y = y*x + a_2;                     // Update y
@@ -112,7 +118,7 @@ namespace RAD_Implementeringsprojekt
             if (y >= p_value) y -= p_value;
             //BigInteger y = new BigInteger(p_value);
             //BigInteger sum = a_0 + a_1 * x + a_2 * (BigInteger)(Math.Pow(x,2)) + a_3 * (BigInteger)(Math.Pow(x,3));
-            var result = (ulong)(y) % (ulong)(Math.Pow(2, l_value)-1);
+            var result = (ulong)((y) % (BigInteger)(Math.Pow(2, l_value)-1));
             return result;
         }
 

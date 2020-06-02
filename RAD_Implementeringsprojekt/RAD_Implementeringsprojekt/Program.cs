@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices;
 
 namespace RAD_Implementeringsprojekt
@@ -60,30 +61,41 @@ namespace RAD_Implementeringsprojekt
             #endregion
 
             #region GetSetTesting
-            var getSetTestTable = new HashTable(Hashfunctions.Multiply_Mod_Prime, keySize);
+            var getSetTestTableMod = new HashTable(Hashfunctions.Multiply_Mod_Prime, keySize);
+            var getSetTestTableFour = new HashTable(Hashfunctions.fourUniversal, keySize);
+            var getSetTestTableShift = new HashTable(Hashfunctions.MultiplyShift, keySize);
             var getSetStreamer = BitStreamcs.CreateStream(50, keySize).ToList();
 
             foreach (var x in getSetStreamer)
             {
                 //Console.WriteLine($" >> Adding value: {x} to table.");
-                getSetTestTable.set(x.Item1, x.Item2);
+                getSetTestTableMod.set(x.Item1, x.Item2);
+                getSetTestTableFour.set(x.Item1, x.Item2);
+                getSetTestTableShift.set(x.Item1, x.Item2);
             }
             foreach (var x in getSetStreamer)
             {
                 //Console.WriteLine($" >> Adding value: {x} to table.");
-                getSetTestTable.set(x.Item1, 0);
+                getSetTestTableMod.set(x.Item1, 0);
+                getSetTestTableFour.set(x.Item1, 0);
+                getSetTestTableShift.set(x.Item1, 0);
             }
 
             foreach (var x in getSetStreamer)
             {
                 //Console.WriteLine($" >> Incrementing value: {x}.");
-                getSetTestTable.increment(x.Item1, 1);
+                getSetTestTableMod.increment(x.Item1, 1);
+                getSetTestTableFour.increment(x.Item1, 1);
+                getSetTestTableShift.increment(x.Item1, 1);
             }
 
             foreach (var x in getSetStreamer)
             {
-                var check = getSetTestTable.get(x.Item1);
-                Console.WriteLine($" >> Searching for value: {x}.   Got {check}");
+                var checkShift = getSetTestTableShift.get(x.Item1);
+                var checkMod   = getSetTestTableMod.get(x.Item1);
+                var checkFour  = getSetTestTableFour.get(x.Item1);
+
+                Console.WriteLine($" >> Searching for value: {x}. Shift: {checkShift}, Mod: {checkMod}, Four: {checkFour}");
             }
             #endregion
 
@@ -110,7 +122,7 @@ namespace RAD_Implementeringsprojekt
                 timer.Reset();
 
                 Console.WriteLine($"Shift: Time for n={streamSize}, l={i}: {timestamp} ms");
-                    
+
                 //------
                 // ModTest
                 timer.Start();
@@ -120,7 +132,7 @@ namespace RAD_Implementeringsprojekt
                 sqTotalTimeMod += timestamp;
                 timer.Stop();
                 timer.Reset();
-                    
+
                 Console.WriteLine($"Mod: Time for n={streamSize}, l={i}: {timestamp} ms");
 
                 timer.Start();
@@ -136,12 +148,26 @@ namespace RAD_Implementeringsprojekt
 
             Console.WriteLine($" >> Total time for shift: {sqTotalTimeShift} ms");
             Console.WriteLine($" >> Total time for mod: {sqTotalTimeMod} ms");
-            Console.WriteLine($" >> Total time for fourUni: {sqTotalTimeFour} ms");
+            // Console.WriteLine($" >> Total time for fourUni: {sqTotalTimeFour} ms");
 
             #endregion
 
             #region CountSketchTests
+            var CountSketchKeySize = 6;
+            var CountSketchStream  = BitStreamcs.CreateStream(100000, CountSketchKeySize);
+            //var StoreCFour = CountSketch.CountSketchEstimate(CountSketchStream, new Hashing(Hashfunctions.fourUniversal, CountSketchKeySize));
+            //var StoreCShift = CountSketch.CountSketchEstimate(CountSketchStream, new Hashing(Hashfunctions.MultiplyShift, CountSketchKeySize));
+            //var StoreCMod = CountSketch.CountSketchEstimate(CountSketchStream, new Hashing(Hashfunctions.Multiply_Mod_Prime, CountSketchKeySize));
 
+            var CountSketchTable = new HashTable(Hashfunctions.MultiplyShift, CountSketchKeySize);
+            var actualStoreC = SquareSum.ComputeSquareSum(CountSketchStream, CountSketchTable);
+
+            //var streamSize = 1000000;
+            //var stream = BitStreamcs.CreateStream(streamSize, i);
+
+
+            //Console.WriteLine($"CountSketch esimate: Shift: {StoreCShift}. Four: {StoreCFour}. Mod: {StoreCMod}");
+            //Console.WriteLine($"Actual value: {actualStoreC}");
             #endregion
 
 

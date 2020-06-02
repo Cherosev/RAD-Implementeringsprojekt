@@ -20,7 +20,7 @@ namespace RAD_Implementeringsprojekt {
         /// Constructor. Takes a hashfunction and the amount of bits in the keys.
         public HashTable(Hashfunctions hashType, int hashSize) 
         {
-            l = Math.Min(hashSize, 21);
+            l = Math.Min(hashSize, 22);
             hashScheme = new Hashing(hashType, l);
             // l > 29 results in array dimensions exceed supported range
             var tableSize = (ulong) Math.Pow(2, l);

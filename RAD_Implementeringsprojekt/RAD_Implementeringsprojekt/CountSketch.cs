@@ -1,26 +1,46 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text;
+using System.Numerics;
 
 namespace RAD_Implementeringsprojekt
 {
     class CountSketch
     {
         // Opgave 6
-        public static ulong CountSketchEstimate()
+        public static long CountSketchEstimate(IEnumerable<Tuple<ulong, int>> stream, Hashing hashScheme, int l)
         {
+            ulong k = (ulong)Math.Pow(2, 89);
+            long[] C = new long[k];
 
-            return 0;
+            foreach (var pair in stream)
+            {
+                var (hx, sx) = RunHashfunction(hashScheme, pair.Item1, k);
+                int delta = pair.Item2;
+                var adding = C[hx] + sx * delta;
+                //Console.WriteLine($"Adding value {adding} to C");
+                C[hx] += adding;
+            }
+
+            long X = 0;
+            Array.ForEach(C, x => X += (long)Math.Pow(x,2));
+            return X;
         }
 
         // Opgave 5
-        public static (ulong, ulong) RunHashfunction(Hashing hashScheme, ulong x, int l)
+        public static (ulong, long) RunHashfunction(Hashing hashScheme, ulong x, ulong t)
         {
+            BigInteger m = (BigInteger)Math.Pow(2, t);
             int   b  = 89;
-            ulong gx = hashScheme.h(x);
-            ulong hx = gx & ((ulong)Math.Pow(2, l) - 1);
+            ulong k = (ulong)Math.Pow(2,b);
+            ulong p = k - 1;
+
+            ulong gx = hashScheme.h(x); // 4universal - tak!
+
+            ulong hx = gx & p;
             ulong bx = gx >> (b-1);
-            ulong sx = 1-(2 * bx);
+            long sx = 1-(long)(2 * bx);
             return (hx, sx);
         }
 
