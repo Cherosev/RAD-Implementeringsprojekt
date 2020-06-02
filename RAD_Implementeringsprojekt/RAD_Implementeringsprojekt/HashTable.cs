@@ -13,20 +13,16 @@ namespace RAD_Implementeringsprojekt {
 
         public int l;
 
-        public delegate ulong hashFunctionDelegate(UInt64 x, UInt64 a, UInt64 b, Int32 l);
-
-
-        public hashFunctionDelegate hashFunction;
+        private Hashing hashScheme;
+        
         public LinkedList<(ulong, int)>[] hashTable;
 
         /// Constructor. Takes a hashfunction and the amount of bits in the keys.
-        public HashTable(hashFunctionDelegate h, int hashSize) 
+        public HashTable(Hashfunctions hashType, int hashSize) 
         {
-            a = getRandomULong();
-            b = getRandomULong();
-            hashFunction = h;
-            // l > 29 results in array dimensions exceed supported range
             l = Math.Min(hashSize, 21);
+            hashScheme = new Hashing(hashType, l);
+            // l > 29 results in array dimensions exceed supported range
             var tableSize = (ulong) Math.Pow(2, l);
             hashTable = new LinkedList<(ulong, int)>[(tableSize)];
         }
@@ -34,7 +30,7 @@ namespace RAD_Implementeringsprojekt {
         /// Finds index of a key by running the tables hashfunction on it.
         public ulong FindIndex(ulong x)
         {
-            return hashFunction(x, a, b, l);
+            return hashScheme.h(x);
         }
 
         public int get(ulong x)
@@ -82,7 +78,10 @@ namespace RAD_Implementeringsprojekt {
         public void increment(ulong x, int d)
         {
             ulong index = FindIndex(x);
-
+            //if (hashScheme.h == hashScheme.fourUniversal)
+            //{
+            //    Console.WriteLine($"Looking for index {index}. Table has {hashTable.Length} indecies. P is {hashScheme.p_value}");
+            //}
             // Find linked list.
             var list = hashTable[index];
             // Check that it is not empty.
@@ -116,21 +115,11 @@ namespace RAD_Implementeringsprojekt {
             BigInteger hashSum = 0;
             foreach(var x in stream)
             {
-                hashSum += hashFunction(x.Item1, a, b, l);
+                hashSum += hashScheme.h(x.Item1);
             }
             Console.WriteLine($"Sum of hashed vals: {hashSum}");
         }
 
-        private ulong getRandomULong()
-        {
-            Random randomGenerator = new Random();
-            Byte[] byteArr = new Byte[8];
-            randomGenerator.NextBytes(byteArr);
-
-            // Ensure ULong is uneven
-            var ret = BitConverter.ToUInt64(byteArr, 0);
-            if( ret % 2 != 1) ret++;
-            return ret;
-        }
+        
     }
 }
