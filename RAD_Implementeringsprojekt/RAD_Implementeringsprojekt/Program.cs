@@ -180,8 +180,8 @@ namespace RAD_Implementeringsprojekt
 
             #region CountSketchTests
             var CountSketchKeySize = 20;
-            var StreamSize = 20000;
-            var CountSketchStream  = BitStreamcs.CreateStream(StreamSize*5, StreamSize);
+            var StreamSize = 100000;
+            var CountSketchStream  = BitStreamcs.CreateStream(StreamSize, 5);
 
             var StoreCFour = CountSketch.CountSketchEstimate(CountSketchStream, new Hashing(Hashfunctions.fourUniversal, CountSketchKeySize));
 
@@ -192,8 +192,8 @@ namespace RAD_Implementeringsprojekt
             //var stream = BitStreamcs.CreateStream(streamSize, i);
 
 
-            Console.WriteLine($"CountSketch esimate: Four: {StoreCFour}.");
-            Console.WriteLine($"Actual value: {actualStoreC}");
+            Console.WriteLine($"CountSketch esimate: Four: {StoreCFour}");
+            Console.WriteLine($"Actual value:              {actualStoreC}");
             #endregion
 
 

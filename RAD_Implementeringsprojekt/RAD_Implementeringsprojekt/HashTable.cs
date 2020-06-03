@@ -23,7 +23,7 @@ namespace RAD_Implementeringsprojekt {
             l = Math.Min(hashSize, 28);
             hashScheme = new Hashing(hashType, l);
             // l > 29 results in array dimensions exceed supported range
-            var tableSize = (1 << l);
+            var tableSize = (ulong)Math.Pow(2, l);
             hashTable = new LinkedList<(ulong, int)>[(tableSize)];
         }
 
@@ -106,6 +106,7 @@ namespace RAD_Implementeringsprojekt {
                 // Next node
                 node = node.Next;
             }
+
             // Element not found. Add it.
             list.AddLast((x, d));
         }

@@ -62,11 +62,11 @@ namespace RAD_Implementeringsprojekt
                     a_1 = getRandomBigDigInt();
                     a_2 = getRandomBigDigInt();
                     a_3 = getRandomBigDigInt();
-                    l_squared = (ulong)BigInteger.Pow(2, l); // l is < 64
+                    //l_squared = (ulong)BigInteger.Pow(2, l); // l is < 64
                     h = fourUniversal; 
                     break;
                 default:
-                    throw new Exception("Fuck noget lort");
+                    throw new Exception($"Function {hashFun} not yet impemented");
             }
         }
 
@@ -111,7 +111,7 @@ namespace RAD_Implementeringsprojekt
             if (y >= p_value) y -= p_value;
             //BigInteger y = new BigInteger(p_value);
             //BigInteger sum = a_0 + a_1 * x + a_2 * (BigInteger)(Math.Pow(x,2)) + a_3 * (BigInteger)(Math.Pow(x,3));
-            var result = (ulong)((y) & (l_squared - 1));
+            var result = (ulong)((y) & ((ulong)BigInteger.Pow(2, l_value) - 1));
             return result;
         }
 
@@ -126,7 +126,7 @@ namespace RAD_Implementeringsprojekt
             return ret | 1;
         }
 
-        private BigInteger getRandomBigDigInt()
+        public static BigInteger getRandomBigDigInt()
         {
             Random randomGenerator = new Random();
             Byte[] byteArr = new Byte[12];

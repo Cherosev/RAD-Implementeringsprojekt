@@ -25,7 +25,7 @@ namespace RAD_Implementeringsprojekt
             }
 
             long X = 0;
-            Array.ForEach(C, x => X += x*x);
+            Array.ForEach(C, x => X += x * x);
             return X;
         }
 
@@ -34,33 +34,16 @@ namespace RAD_Implementeringsprojekt
         {
             var t = hashScheme.l_value;
             BigInteger m = (BigInteger)Math.Pow(2, t);
-            int   b  = 89;
-            BigInteger k = (BigInteger)Math.Pow(2,b);
+            int b = 89;
+            BigInteger k = (BigInteger)Math.Pow(2, b);
             BigInteger p = k - 1;
 
             ulong gx = hashScheme.h(x); // 4universal - tak!
 
             // ulong hx = gx ;
             ulong bx = gx & 1;
-            long sx = 1-(long)(2 * bx);
+            long sx = 1 - (long)(2 * bx);
             return (gx, sx);
         }
-
-        // Opgave 5
-        public static ulong CountSketch_h(ulong hashValue, int t)
-        {
-            ulong m = (ulong)Math.Pow(2, t);
-            return 0;
-        }
-
-
-        // Opgave 5
-        public static ulong CountSketch_s(ulong hashValue, int k)
-        {
-            ulong hx = hashValue & ((ulong)k-1);
-            ulong bx = hashValue >> (89-1);
-            return (ulong) 1-(ulong)2*bx; 
-        }
-
     }
 }
