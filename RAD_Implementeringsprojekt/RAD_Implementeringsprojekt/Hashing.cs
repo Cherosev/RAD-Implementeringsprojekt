@@ -23,7 +23,7 @@ namespace RAD_Implementeringsprojekt
         public ulong l_squared;
         public BigInteger p_value;
         public int   q_value;
-        public int   k = 4;
+        //public int   k = 4;
 
         public BigInteger a_0;
         public BigInteger a_1;
@@ -62,6 +62,11 @@ namespace RAD_Implementeringsprojekt
                     a_1 = getRandomBigDigInt();
                     a_2 = getRandomBigDigInt();
                     a_3 = getRandomBigDigInt();
+                    if (a_0 < 0) Console.WriteLine("a_0 is < 0");
+                    if (a_1 < 0) Console.WriteLine("a_1 is < 0");
+                    if (a_2 < 0) Console.WriteLine("a_2 is < 0");
+                    if (a_3 < 0) Console.WriteLine("a_3 is < 0");
+
                     //l_squared = (ulong)BigInteger.Pow(2, l); // l is < 64
                     h = fourUniversal; 
                     break;
@@ -102,16 +107,15 @@ namespace RAD_Implementeringsprojekt
         {
             BigInteger y = a_0;
             y = y*x + a_1;                     // Update y
-            y = (y&p_value) + (y>>l_value);    // Update y
+            y = (y&p_value) + (y>>q_value);    // Update y
             y = y*x + a_2;                     // Update y
-            y = (y&p_value) + (y>>l_value);    // Update y
+            y = (y&p_value) + (y>>q_value);    // Update y
             y = y*x + a_3;                     // Update y
-            y = (y&p_value) + (y>>l_value);    // Update y
+            y = (y&p_value) + (y>>q_value);    // Update y
 
             if (y >= p_value) y -= p_value;
-            //BigInteger y = new BigInteger(p_value);
-            //BigInteger sum = a_0 + a_1 * x + a_2 * (BigInteger)(Math.Pow(x,2)) + a_3 * (BigInteger)(Math.Pow(x,3));
-            var result = (ulong)((y) & ((ulong)BigInteger.Pow(2, l_value) - 1));
+
+            var result = (ulong)( (y) % ((ulong)BigInteger.Pow(2, l_value)-1));
             return result;
         }
 
@@ -123,17 +127,24 @@ namespace RAD_Implementeringsprojekt
 
             // Ensure ULong is uneven
             var ret = BitConverter.ToUInt64(byteArr, 0);
-            return ret | 1;
+            if (ret % 2 != 1) ret++;
+            return ret;
         }
 
         public static BigInteger getRandomBigDigInt()
         {
             Random randomGenerator = new Random();
-            Byte[] byteArr = new Byte[12];
+            Byte[] byteArr = new Byte[11];
             Byte one = 1;
-            byteArr[11] = (byte)(byteArr[11] & one);
+            // byteArr[11] = (byte)(byteArr[11] & one);
             randomGenerator.NextBytes(byteArr);
-            return new BigInteger(byteArr);
+            var ret = new BigInteger(byteArr);
+            if (ret < 0)
+            {
+                ret = ret * (-1);
+            }
+                //Console.WriteLine(ret);
+            return ret;
         }
     }
 }

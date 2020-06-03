@@ -11,7 +11,7 @@ namespace RAD_Implementeringsprojekt
         public static BigInteger ComputeSquareSum(IEnumerable<Tuple<ulong, int>> stream, HashTable table)
         {
             var streamList = stream.ToList();
-            Console.WriteLine(streamList.Select(x => x.Item1).Distinct().Count());
+            Console.WriteLine($"Distinct keys in stream: {streamList.Select(x => x.Item1).Distinct().Count()}");
             
             // Add all keys to table.
             

@@ -156,11 +156,11 @@ namespace RAD_Implementeringsprojekt
             #region SaveHitTest
 
             //var SaveHitTestKeySize = 6;
-            //var StreamSize = 1000;
-            //var SaveHitStream = BitStreamcs.CreateStream(StreamSize, StreamSize);
-            //var SaveHitShiftTable = new HashTable(Hashfunctions.MultiplyShift, SaveHitTestKeySize);
-            //var SaveHitModTable = new HashTable(Hashfunctions.Multiply_Mod_Prime, SaveHitTestKeySize);
-            //var SaveHitFourTable = new HashTable(Hashfunctions.fourUniversal, SaveHitTestKeySize);
+            //var SaveHitStreamSize = 1000;
+            //var SaveHitStream = BitStreamcs.CreateStream(SaveHitStreamSize, SaveHitStreamSize);
+            //var SaveHitShiftTable = new HashTable(Hashfunctions.MultiplyShift, SaveHitStreamSize);
+            //var SaveHitModTable = new HashTable(Hashfunctions.Multiply_Mod_Prime, SaveHitStreamSize);
+            //var SaveHitFourTable = new HashTable(Hashfunctions.fourUniversal, SaveHitStreamSize);
 
             //foreach (var pair in SaveHitStream)
             //{
@@ -179,11 +179,12 @@ namespace RAD_Implementeringsprojekt
             #endregion
 
             #region CountSketchTests
-            var CountSketchKeySize = 20;
-            var StreamSize = 100000;
-            var CountSketchStream  = BitStreamcs.CreateStream(StreamSize, 5);
+            var CountSketchKeySize = 10;
+            var CountStreamSize = 10000;
+            var CountSketchStream  = BitStreamcs.CreateStream(CountStreamSize, CountSketchKeySize);
 
-            var StoreCFour = CountSketch.CountSketchEstimate(CountSketchStream, new Hashing(Hashfunctions.fourUniversal, CountSketchKeySize));
+            var fourUniHashing = new Hashing(Hashfunctions.fourUniversal, CountSketchKeySize);
+            var StoreCFour = CountSketch.CountSketchEstimate(CountSketchStream, fourUniHashing);
 
             var CountSketchTable = new HashTable(Hashfunctions.MultiplyShift, CountSketchKeySize);
             var actualStoreC = SquareSum.ComputeSquareSum(CountSketchStream, CountSketchTable);
