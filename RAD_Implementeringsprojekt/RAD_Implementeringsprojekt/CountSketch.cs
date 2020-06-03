@@ -11,24 +11,18 @@ namespace RAD_Implementeringsprojekt
         // Opgave 6
         public static long CountSketchEstimate(IEnumerable<Tuple<ulong, int>> stream, Hashing hashScheme)
         {
-            var l = hashScheme.l_value;
-            ulong k = (ulong)Math.Pow(2, l);
+            ulong k = (ulong)Math.Pow(2, hashScheme.l_value);
             Console.WriteLine($"Estimate array: {k}");
             long[] C = new long[k];
 
             foreach (var pair in stream)
             {
                 var (hx, sx) = RunHashfunction(hashScheme, pair.Item1);
-                //Console.WriteLine($"Key {pair.Item1} hashed to index {hx}");
+
                 int delta = pair.Item2;
                 var adding = sx * delta;
-                //Console.WriteLine($"Adding value {adding} to C");
+
                 C[hx] += adding;
-                //foreach (var c in C)
-                //{
-                //    Console.WriteLine($"[{c}]");
-                //}
-                //Console.WriteLine();
             }
             
 
@@ -37,9 +31,6 @@ namespace RAD_Implementeringsprojekt
             {
                 X += c*c;
             }
-
-
-            // Array.ForEach(C, x => X += (long)BigInteger.Pow(x, 2));
             return X;
         }
 
@@ -47,7 +38,6 @@ namespace RAD_Implementeringsprojekt
         public static (ulong, long) RunHashfunction(Hashing hashScheme, ulong x)
         {
             var t = hashScheme.l_value;
-            //BigInteger m = (BigInteger)Math.Pow(2, t);
             int b = 89;
             BigInteger k = (BigInteger)Math.Pow(2, b);
             BigInteger p = k - 1;

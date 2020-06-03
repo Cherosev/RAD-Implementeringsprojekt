@@ -16,14 +16,13 @@ namespace RAD_Implementeringsprojekt
 
     class Hashing
     {
-
-        public ulong a_value;
-        public ulong b_value;
+        public ulong a_value_64;
+        public BigInteger a_value;
+        public BigInteger b_value;
         public int   l_value;
         public ulong l_squared;
         public BigInteger p_value;
         public int   q_value;
-        //public int   k = 4;
 
         public BigInteger a_0;
         public BigInteger a_1;
@@ -47,12 +46,12 @@ namespace RAD_Implementeringsprojekt
             switch (hashFun)
             {
                 case Hashfunctions.MultiplyShift:
-                    a_value = getRandomULong();
+                    a_value_64 = getRandomULong();
                     h = MultiplyShift;
                     break;
                 case Hashfunctions.Multiply_Mod_Prime:
-                    a_value = getRandomULong();
-                    b_value = getRandomULong();
+                    a_value = getRandomBigDigInt();
+                    b_value = getRandomBigDigInt();
                     l_squared = (ulong) BigInteger.Pow(2, l);
                     h = Multiply_mod_prime;
                     break;
@@ -79,14 +78,11 @@ namespace RAD_Implementeringsprojekt
         public ulong MultiplyShift(UInt64 x)
         {
             // Bound checks
-            if( a_value % 2 != 1 || l_value <= 0 || l_value >= 64) {
-                throw new Exception($"Multiply shift error. Args: l={l_value}, a={a_value}, x={x}");
+            if(a_value_64 % 2 != 1 || l_value <= 0 || l_value >= 64) {
+                throw new Exception($"Multiply shift error. Args: l={l_value}, a={a_value_64}, x={x}");
             }
-
-            var mult = a_value * x;
-            //Console.WriteLine($"A and x multiplied to {mult}");
+            var mult = a_value_64 * x;
             int shift = 64 - l_value;
-            //Console.WriteLine($"Shifting set to {shift}");
 
             return (mult>>shift);
         }
@@ -97,7 +93,7 @@ namespace RAD_Implementeringsprojekt
             BigInteger mult = (a_value * x + b_value);
             BigInteger firstMod = (mult & p_value) + (mult >> q_value);
             if (firstMod >= p_value) firstMod -= p_value;
-
+            if (firstMod > p_value) throw new Exception("Dude det her er problemet");
             ulong result = (ulong)(firstMod & (l_squared-1));
 
             return result;
@@ -112,10 +108,9 @@ namespace RAD_Implementeringsprojekt
             y = (y&p_value) + (y>>q_value);    // Update y
             y = y*x + a_3;                     // Update y
             y = (y&p_value) + (y>>q_value);    // Update y
-
             if (y >= p_value) y -= p_value;
 
-            var result = (ulong)( (y) % ((ulong)BigInteger.Pow(2, l_value)-1));
+            var result = (ulong)( (y) & ((ulong)BigInteger.Pow(2, l_value)-1));
             return result;
         }
 
@@ -125,25 +120,23 @@ namespace RAD_Implementeringsprojekt
             Byte[] byteArr = new Byte[8];
             randomGenerator.NextBytes(byteArr);
 
-            // Ensure ULong is uneven
             var ret = BitConverter.ToUInt64(byteArr, 0);
-            if (ret % 2 != 1) ret++;
-            return ret;
+            // Ensure ULong is uneven            
+            return ret | 1;
         }
 
         public static BigInteger getRandomBigDigInt()
         {
             Random randomGenerator = new Random();
             Byte[] byteArr = new Byte[11];
-            Byte one = 1;
-            // byteArr[11] = (byte)(byteArr[11] & one);
             randomGenerator.NextBytes(byteArr);
             var ret = new BigInteger(byteArr);
+
+            //If generated bigInt is negative - make it positive!
             if (ret < 0)
             {
                 ret = ret * (-1);
             }
-                //Console.WriteLine(ret);
             return ret;
         }
     }

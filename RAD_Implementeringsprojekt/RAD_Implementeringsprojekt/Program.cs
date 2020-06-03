@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace RAD_Implementeringsprojekt
@@ -23,12 +24,12 @@ namespace RAD_Implementeringsprojekt
 
             var timer = System.Diagnostics.Stopwatch.StartNew();
             long timestamp = 0;
-            var n = 10000;
+            var n = 1000000;
 
             Console.WriteLine($" --- Testing time for MultiplyShift. Hashing {n} values---");
             HashTable table;
 
-            #region simpleTests
+            #region simpleHashingTests
             long timeSumShift = 0;
             for (int i = 5; i < 25; i += 2)
             {
@@ -37,12 +38,12 @@ namespace RAD_Implementeringsprojekt
                 var streamer = BitStreamcs.CreateStream(n, i);
                 table.hashKeysTimeTest(streamer);
                 timestamp = timer.ElapsedMilliseconds;
-                Console.WriteLine($"Shift: Time for l={i}:   {timestamp} ms");
+                //Console.WriteLine($"Shift: Time for l={i}:   {timestamp} ms");
                 timeSumShift += timestamp;
                 timer.Stop();
                 timer.Reset();
             }
-            Console.WriteLine($" >> Total time for shift: {timeSumShift} ms");
+            Console.WriteLine($" >> SimpleHashing - Total time for shift: {timeSumShift} ms");
 
             long timeSumMod = 0;
             Console.WriteLine($" --- Testing time for Mod. Hashing {n} values ---");
@@ -53,12 +54,12 @@ namespace RAD_Implementeringsprojekt
                 var streamer = BitStreamcs.CreateStream(n, i);
                 table.hashKeysTimeTest(streamer);
                 timestamp = timer.ElapsedMilliseconds;
-                Console.WriteLine($"Mod: Time for l={i}:   {timestamp} ms");
+                //Console.WriteLine($"Mod: Time for l={i}:   {timestamp} ms");
                 timeSumMod += timestamp;
                 timer.Stop();
                 timer.Reset();
             }
-            Console.WriteLine($" >> Total time for mod: {timeSumMod} ms");
+            Console.WriteLine($" >> SimpleHashing - Total time for mod: {timeSumMod} ms");
             #endregion
 
             #region GetSetTesting
@@ -96,7 +97,7 @@ namespace RAD_Implementeringsprojekt
                 var checkMod   = getSetTestTableMod.get(x.Item1);
                 var checkFour  = getSetTestTableFour.get(x.Item1);
 
-                Console.WriteLine($" >> Searching for value: {x}. Shift: {checkShift}, Mod: {checkMod}, Four: {checkFour}");
+                //Console.WriteLine($" >> Searching for value: {x}. Shift: {checkShift}, Mod: {checkMod}, Four: {checkFour}");
             }
             #endregion
 
@@ -104,51 +105,43 @@ namespace RAD_Implementeringsprojekt
             n = 10000;
             timer.Reset();
             
-
-            long sqTotalTimeShift = 0;
-            long sqTotalTimeMod = 0;
             //long sqTotalTimeFour = 0;
-            for (int i = 27; i < 27; i += 2)
+            for (int i = 12; i <= 21; i += 3)
             {
-                var streamSize = 1000000;
-                var stream = BitStreamcs.CreateStream(streamSize, streamSize/5);
-                //--------
-                // ShiftTest
-                timer.Start();
-                var sqSumTestTableShift = new HashTable(Hashfunctions.MultiplyShift, i);
-                var shiftSum = SquareSum.ComputeSquareSum(stream, sqSumTestTableShift);
-                timestamp = timer.ElapsedMilliseconds;
-                sqTotalTimeShift += timestamp;
-                timer.Stop();
-                timer.Reset();
+                long sqTotalTimeShift = 0;
+                long sqTotalTimeMod = 0;
+                for (int streamSize = 5000; streamSize <= 100000; streamSize += 5000)
+                {
+                    var stream = BitStreamcs.CreateStream(streamSize, i);
+                    //--------
+                    // ShiftTest
+                    timer.Start();
+                    var sqSumTestTableShift = new HashTable(Hashfunctions.MultiplyShift, i);
+                    var shiftSum = SquareSum.ComputeSquareSum(stream, sqSumTestTableShift);
+                    timestamp = timer.ElapsedMilliseconds;
+                    sqTotalTimeShift += timestamp;
+                    timer.Stop();
+                    timer.Reset();
 
-                Console.WriteLine($"Shift: Time for n={streamSize}, l={i}: {timestamp} ms");
+                    //Console.WriteLine($"Shift: Time for n={streamSize}, l={i}: {timestamp} ms");
 
-                //------
-                // ModTest
-                timer.Start();
-                var sqSumTestTableMod = new HashTable(Hashfunctions.Multiply_Mod_Prime, i);
-                var modSum = SquareSum.ComputeSquareSum(stream, sqSumTestTableMod);
-                timestamp = timer.ElapsedMilliseconds;
-                sqTotalTimeMod += timestamp;
-                timer.Stop();
-                timer.Reset();
+                    //------
+                    // ModTest
+                    timer.Start();
+                    var sqSumTestTableMod = new HashTable(Hashfunctions.Multiply_Mod_Prime, i);
+                    var modSum = SquareSum.ComputeSquareSum(stream, sqSumTestTableMod);
+                    timestamp = timer.ElapsedMilliseconds;
+                    sqTotalTimeMod += timestamp;
+                    timer.Stop();
+                    timer.Reset();
 
-                Console.WriteLine($"Mod: Time for n={streamSize}, l={i}: {timestamp} ms");
-
-                //timer.Start();
-                //var forUniSumTestTableMod = new HashTable(Hashfunctions.fourUniversal, i);
-                //var forUniSum = SquareSum.ComputeSquareSum(stream, forUniSumTestTableMod);
-                //timestamp = timer.ElapsedMilliseconds;
-                //sqTotalTimeFour += timestamp;
-                //timer.Stop();
-                //timer.Reset();
-
-                //Console.WriteLine($"fourUni: Time for n={streamSize}, l={i}: {timestamp} ms");
+                    //Console.WriteLine($"Mod: Time for n={streamSize}, l={i}: {timestamp} ms");
+                }
+                Console.WriteLine($" >> Squaresum - Total time for shift for l={i}: {sqTotalTimeShift} ms");
+                Console.WriteLine($" >> Squaresum - Total time for mod for   l={i}: {sqTotalTimeMod} ms");
             }
 
-            Console.WriteLine($" >> Total time for shift: {sqTotalTimeShift} ms");
-            Console.WriteLine($" >> Total time for mod: {sqTotalTimeMod} ms");
+            
             // Console.WriteLine($" >> Total time for fourUni: {sqTotalTimeFour} ms");
 
             #endregion
@@ -179,8 +172,8 @@ namespace RAD_Implementeringsprojekt
             #endregion
 
             #region CountSketchTests
-            var CountSketchKeySize = 10;
-            var CountStreamSize = 10000;
+            var CountSketchKeySize = 12;
+            var CountStreamSize = 1000;
             var CountSketchStream  = BitStreamcs.CreateStream(CountStreamSize, CountSketchKeySize);
 
             var fourUniHashing = new Hashing(Hashfunctions.fourUniversal, CountSketchKeySize);
