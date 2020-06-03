@@ -25,37 +25,37 @@ namespace RAD_Implementeringsprojekt
 
             var timer = System.Diagnostics.Stopwatch.StartNew();
             //long timestamp = 0;
-            
+
 
             #region simpleHashingTests
-            var SimpleTest_n = 1000000;
-            BigInteger tempTestlistShift = 0; //Used to trick the program to not optimize our code away
-            BigInteger tempTestlistMod   = 0; //Used to trick the program to not optimize our code away
+            //var SimpleTest_n = 1000000;
+            //BigInteger tempTestlistShift = 0; //Used to trick the program to not optimize our code away
+            //BigInteger tempTestlistMod = 0; //Used to trick the program to not optimize our code away
 
-            Console.WriteLine($" --- Testing time for MultiplyShift. Hashing {SimpleTest_n} values---");
+            //Console.WriteLine($" --- Testing time for MultiplyShift. Hashing {SimpleTest_n} values---");
 
-            for (int i = 16; i <= 30; i += 2)
-            {
-                var ShiftTable = new HashTable(Hashfunctions.MultiplyShift, i);
-                var streamer = BitStreamcs.CreateStream(SimpleTest_n, i);
-                timer.Start();
-                tempTestlistShift = (ShiftTable.hashKeysTimeTest(streamer));
-                var timestampShift = timer.ElapsedMilliseconds;
-                Console.WriteLine($"Shift: Time for l={i} and n = {SimpleTest_n}:   {timestampShift} ms");
-                timer.Stop();
-                timer.Reset();
-                tempTestlistShift = 0;
+            //for (int i = 16; i <= 30; i += 2)
+            //{
+            //    var ShiftTable = new HashTable(Hashfunctions.MultiplyShift, i);
+            //    var streamer = BitStreamcs.CreateStream(SimpleTest_n, i);
+            //    timer.Start();
+            //    tempTestlistShift = (ShiftTable.hashKeysTimeTest(streamer));
+            //    var timestampShift = timer.ElapsedMilliseconds;
+            //    Console.WriteLine($"Shift: Time for l={i} and n = {SimpleTest_n}:   {timestampShift} ms");
+            //    timer.Stop();
+            //    timer.Reset();
+            //    tempTestlistShift = 0;
 
-                var MultModTable = new HashTable(Hashfunctions.Multiply_Mod_Prime, i);
-                timer.Start();
-                tempTestlistMod = (MultModTable.hashKeysTimeTest(streamer));
-                var timestampModMult = timer.ElapsedMilliseconds;
-                Console.WriteLine($"Mod:   Time for l={i} and n = {SimpleTest_n}:   {timestampModMult} ms");
-                timer.Stop();
-                timer.Reset();
-                tempTestlistMod = 0;
-            }
-            Console.WriteLine($" --------------------------------------------------- ");
+            //    var MultModTable = new HashTable(Hashfunctions.Multiply_Mod_Prime, i);
+            //    timer.Start();
+            //    tempTestlistMod = (MultModTable.hashKeysTimeTest(streamer));
+            //    var timestampModMult = timer.ElapsedMilliseconds;
+            //    Console.WriteLine($"Mod:   Time for l={i} and n = {SimpleTest_n}:   {timestampModMult} ms");
+            //    timer.Stop();
+            //    timer.Reset();
+            //    tempTestlistMod = 0;
+            //}
+            //Console.WriteLine($" --------------------------------------------------- ");
             //Console.WriteLine($" >> SimpleHashing - Total time for shift: {timeSumShift} ms");
 
             //long timeSumMod = 0;
@@ -116,12 +116,12 @@ namespace RAD_Implementeringsprojekt
 
             #region SquareSumTest
             timer.Reset();
-            
-            //long sqTotalTimeFour = 0;
-            for (int i = 12; i <= 27; i += 3)
+
+            long sqTotalTimeFour = 0;
+            for (int i = 12; i <= 29; i += 1)
             {
-                int streamSize = 100000;
-       
+                int streamSize = 1000000;
+
                 var stream = BitStreamcs.CreateStream(streamSize, i);
                 //--------
                 // ShiftTest
@@ -131,7 +131,7 @@ namespace RAD_Implementeringsprojekt
                 var timestampShift = timer.ElapsedMilliseconds;
                 timer.Stop();
                 timer.Reset();
-                Console.WriteLine($" >> Squaresum - Total time for shift for l={i}: {timestampShift} ms");
+                Console.WriteLine($" >> Squaresum - Total time for shift for l={i}: {timestampShift} ms    sum: {shiftSum}");
 
                 //Console.WriteLine($"Shift: Time for n={streamSize}, l={i}: {timestamp} ms");
 
@@ -144,10 +144,10 @@ namespace RAD_Implementeringsprojekt
                 timer.Stop();
                 timer.Reset();
 
-                Console.WriteLine($" >> Squaresum - Total time for mod for   l={i}: {timestampMod} ms");
+                Console.WriteLine($" >> Squaresum - Total time for mod for   l={i}: {timestampMod} ms    sum: {modSum}");
             }
 
-            
+
             // Console.WriteLine($" >> Total time for fourUni: {sqTotalTimeFour} ms");
 
             #endregion
@@ -178,22 +178,49 @@ namespace RAD_Implementeringsprojekt
             #endregion
 
             #region CountSketchTests
-            var CountSketchKeySize = 6;
-            var CountStreamSize = 1000000;
-            var CountSketchStream  = BitStreamcs.CreateStream(CountStreamSize, CountSketchKeySize);
+            var testamount = 100;
+            var resultArray = new ((long, long), (BigInteger, long))[testamount];
+            for (int i = 0; i < testamount; i++)
+            {
+                Console.WriteLine($"On iteration {i}");
+                var CountSketchKeySize = 24;
+                var CountStreamSize = 1000000;
+                var CountSketchStream = BitStreamcs.CreateStream(CountStreamSize, CountSketchKeySize);
 
-            var fourUniHashing = new Hashing(Hashfunctions.fourUniversal, CountSketchKeySize);
-            var StoreCFour = CountSketch.CountSketchEstimate(CountSketchStream, fourUniHashing);
+                timer.Reset();
+                timer.Start();
+                var fourUniHashing = new Hashing(Hashfunctions.fourUniversal, CountSketchKeySize);
+                var StoreCFour = CountSketch.CountSketchEstimate(CountSketchStream, fourUniHashing);
+                var estimateElapsed = timer.ElapsedMilliseconds;
+                timer.Stop();
+                timer.Reset();
 
-            var CountSketchTable = new HashTable(Hashfunctions.MultiplyShift, CountSketchKeySize);
-            var actualStoreC = SquareSum.ComputeSquareSum(CountSketchStream, CountSketchTable);
+                timer.Start();
+                var CountSketchTable = new HashTable(Hashfunctions.MultiplyShift, CountSketchKeySize);
+                var actualStoreC = SquareSum.ComputeSquareSum(CountSketchStream, CountSketchTable);
+                var actualElapsed = timer.ElapsedMilliseconds;
+                timer.Stop();
+                timer.Reset();
 
+                Console.WriteLine($"Estimate: {StoreCFour}, Actual: {actualStoreC}");
+                resultArray[i] = ((StoreCFour, estimateElapsed), (actualStoreC, actualElapsed));
+            }
             //var streamSize = 1000000;
             //var stream = BitStreamcs.CreateStream(streamSize, i);
 
+            foreach (var pairPair in resultArray)
+            {
+                Console.WriteLine($"Estimated value: {pairPair.Item1.Item1}, time: {pairPair.Item1.Item2}");
+                //Console.WriteLine($"Actual value:    {pairPair.Item2.Item1}, time: {pairPair.Item2.Item2}");
+            }
+            foreach (var pairPair in resultArray)
+            {
+                //Console.WriteLine($"Estimated value: {pairPair.Item1.Item1}, time: {pairPair.Item1.Item2}");
+                Console.WriteLine($"Actual value:    {pairPair.Item2.Item1}, time: {pairPair.Item2.Item2}");
+            }
 
-            Console.WriteLine($"CountSketch esimate: Four: {StoreCFour}");
-            Console.WriteLine($"Actual value:              {actualStoreC}");
+            //Console.WriteLine($"CountSketch esimate:        {StoreCFour}");
+            //Console.WriteLine($"Actual value (using shift): {actualStoreC}");
             #endregion
             Console.WriteLine($"");
 
