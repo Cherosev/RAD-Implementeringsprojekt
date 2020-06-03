@@ -11,9 +11,7 @@ namespace RAD_Implementeringsprojekt
     {
         MultiplyShift,
         Multiply_Mod_Prime,
-        fourUniversal,
-        Count_Sketch_h,
-        Count_Sketch_s
+        fourUniversal
     }
 
     class Hashing
@@ -27,10 +25,10 @@ namespace RAD_Implementeringsprojekt
         public int   q_value;
         public int   k = 4;
 
-        public ulong a_0;
-        public ulong a_1;
-        public ulong a_2;
-        public ulong a_3;
+        public BigInteger a_0;
+        public BigInteger a_1;
+        public BigInteger a_2;
+        public BigInteger a_3;
 
         public ulong a;
         public ulong b;
@@ -45,7 +43,7 @@ namespace RAD_Implementeringsprojekt
         {   
             l_value = l;
             q_value = 89;
-            p_value = (BigInteger) Math.Pow(2, q_value) - 1;
+            p_value = BigInteger.Pow(2, q_value) - 1;
             switch (hashFun)
             {
                 case Hashfunctions.MultiplyShift:
@@ -55,17 +53,17 @@ namespace RAD_Implementeringsprojekt
                 case Hashfunctions.Multiply_Mod_Prime:
                     a_value = getRandomULong();
                     b_value = getRandomULong();
-                    l_squared = (ulong)Math.Pow(2, l);
+                    l_squared = (ulong) BigInteger.Pow(2, l);
                     h = Multiply_mod_prime;
                     break;
 
                 case Hashfunctions.fourUniversal:
-                    Random rnd = new Random();
-                    a_0 = getRandomULong();
-                    a_1 = getRandomULong();
-                    a_2 = getRandomULong();
-                    a_3 = getRandomULong();
-                    h = fourUniversal; // DENNE HER LINJE FIXER LORTET
+                    a_0 = getRandomBigDigInt();
+                    a_1 = getRandomBigDigInt();
+                    a_2 = getRandomBigDigInt();
+                    a_3 = getRandomBigDigInt();
+                    l_squared = (ulong)BigInteger.Pow(2, l); // l is < 64
+                    h = fourUniversal; 
                     break;
                 default:
                     throw new Exception("Fuck noget lort");
@@ -91,17 +89,12 @@ namespace RAD_Implementeringsprojekt
         // a and b are less than p, and l is a positive integer less than 64.
         public ulong Multiply_mod_prime(UInt64 x)
         {
-            //var timer = System.Diagnostics.Stopwatch.StartNew();
-            //timer.Start();
             BigInteger mult = (a_value * x + b_value);
             BigInteger firstMod = (mult & p_value) + (mult >> q_value);
             if (firstMod >= p_value) firstMod -= p_value;
-            //var timestamp1 = timer.ElapsedMilliseconds;
 
-            ulong result = (ulong)(firstMod % (BigInteger)l_squared);
-            //var timerstamp2 = timer.ElapsedMilliseconds;
+            ulong result = (ulong)(firstMod & (l_squared-1));
 
-            //Console.WriteLine($"ts1: {timestamp1}. ts2: {timerstamp2}");
             return result;
         }
         
@@ -118,16 +111,8 @@ namespace RAD_Implementeringsprojekt
             if (y >= p_value) y -= p_value;
             //BigInteger y = new BigInteger(p_value);
             //BigInteger sum = a_0 + a_1 * x + a_2 * (BigInteger)(Math.Pow(x,2)) + a_3 * (BigInteger)(Math.Pow(x,3));
-            var result = (ulong)((y) % (BigInteger)(Math.Pow(2, l_value)-1));
+            var result = (ulong)((y) & (l_squared - 1));
             return result;
-        }
-
-        public ulong Count_Sketch(UInt64 x)
-        {
-
-
-
-            return 0;
         }
 
         private ulong getRandomULong()
@@ -138,8 +123,17 @@ namespace RAD_Implementeringsprojekt
 
             // Ensure ULong is uneven
             var ret = BitConverter.ToUInt64(byteArr, 0);
-            if( ret % 2 != 1) ret++;
-            return ret;
+            return ret | 1;
+        }
+
+        private BigInteger getRandomBigDigInt()
+        {
+            Random randomGenerator = new Random();
+            Byte[] byteArr = new Byte[12];
+            Byte one = 1;
+            byteArr[11] = (byte)(byteArr[11] & one);
+            randomGenerator.NextBytes(byteArr);
+            return new BigInteger(byteArr);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
@@ -106,11 +107,11 @@ namespace RAD_Implementeringsprojekt
 
             long sqTotalTimeShift = 0;
             long sqTotalTimeMod = 0;
-            long sqTotalTimeFour = 0;
-            for (int i = 5; i < 64; i += 2)
+            //long sqTotalTimeFour = 0;
+            for (int i = 27; i < 27; i += 2)
             {
                 var streamSize = 1000000;
-                var stream = BitStreamcs.CreateStream(streamSize, i);
+                var stream = BitStreamcs.CreateStream(streamSize, streamSize/5);
                 //--------
                 // ShiftTest
                 timer.Start();
@@ -135,15 +136,15 @@ namespace RAD_Implementeringsprojekt
 
                 Console.WriteLine($"Mod: Time for n={streamSize}, l={i}: {timestamp} ms");
 
-                timer.Start();
-                var forUniSumTestTableMod = new HashTable(Hashfunctions.fourUniversal, i);
-                var forUniSum = SquareSum.ComputeSquareSum(stream, forUniSumTestTableMod);
-                timestamp = timer.ElapsedMilliseconds;
-                sqTotalTimeFour += timestamp;
-                timer.Stop();
-                timer.Reset();
+                //timer.Start();
+                //var forUniSumTestTableMod = new HashTable(Hashfunctions.fourUniversal, i);
+                //var forUniSum = SquareSum.ComputeSquareSum(stream, forUniSumTestTableMod);
+                //timestamp = timer.ElapsedMilliseconds;
+                //sqTotalTimeFour += timestamp;
+                //timer.Stop();
+                //timer.Reset();
 
-                Console.WriteLine($"fourUni: Time for n={streamSize}, l={i}: {timestamp} ms");
+                //Console.WriteLine($"fourUni: Time for n={streamSize}, l={i}: {timestamp} ms");
             }
 
             Console.WriteLine($" >> Total time for shift: {sqTotalTimeShift} ms");
@@ -152,12 +153,37 @@ namespace RAD_Implementeringsprojekt
 
             #endregion
 
+            #region SaveHitTest
+
+            //var SaveHitTestKeySize = 6;
+            //var StreamSize = 1000;
+            //var SaveHitStream = BitStreamcs.CreateStream(StreamSize, StreamSize);
+            //var SaveHitShiftTable = new HashTable(Hashfunctions.MultiplyShift, SaveHitTestKeySize);
+            //var SaveHitModTable = new HashTable(Hashfunctions.Multiply_Mod_Prime, SaveHitTestKeySize);
+            //var SaveHitFourTable = new HashTable(Hashfunctions.fourUniversal, SaveHitTestKeySize);
+
+            //foreach (var pair in SaveHitStream)
+            //{
+            //    SaveHitShiftTable.set(pair.Item1, pair.Item2);
+            //    SaveHitModTable.set(pair.Item1, pair.Item2);
+            //    SaveHitFourTable.set(pair.Item1, pair.Item2);
+            //}
+
+            //foreach (var pair in SaveHitStream)
+            //{
+            //    if (SaveHitShiftTable.get(pair.Item1) != pair.Item2) throw new Exception($"Shift: Key {pair.Item1} did not return correct value.");
+            //    if (SaveHitModTable.get(pair.Item1) != pair.Item2) throw new Exception($"Mod: Key {pair.Item1} did not return correct value.");
+            //    if (SaveHitFourTable.get(pair.Item1) != pair.Item2) throw new Exception($"Four: Key {pair.Item1} did not return correct value.");
+            //}
+
+            #endregion
+
             #region CountSketchTests
-            var CountSketchKeySize = 6;
-            var CountSketchStream  = BitStreamcs.CreateStream(100000, CountSketchKeySize);
-            //var StoreCFour = CountSketch.CountSketchEstimate(CountSketchStream, new Hashing(Hashfunctions.fourUniversal, CountSketchKeySize));
-            //var StoreCShift = CountSketch.CountSketchEstimate(CountSketchStream, new Hashing(Hashfunctions.MultiplyShift, CountSketchKeySize));
-            //var StoreCMod = CountSketch.CountSketchEstimate(CountSketchStream, new Hashing(Hashfunctions.Multiply_Mod_Prime, CountSketchKeySize));
+            var CountSketchKeySize = 20;
+            var StreamSize = 20000;
+            var CountSketchStream  = BitStreamcs.CreateStream(StreamSize*5, StreamSize);
+
+            var StoreCFour = CountSketch.CountSketchEstimate(CountSketchStream, new Hashing(Hashfunctions.fourUniversal, CountSketchKeySize));
 
             var CountSketchTable = new HashTable(Hashfunctions.MultiplyShift, CountSketchKeySize);
             var actualStoreC = SquareSum.ComputeSquareSum(CountSketchStream, CountSketchTable);
@@ -166,10 +192,9 @@ namespace RAD_Implementeringsprojekt
             //var stream = BitStreamcs.CreateStream(streamSize, i);
 
 
-            //Console.WriteLine($"CountSketch esimate: Shift: {StoreCShift}. Four: {StoreCFour}. Mod: {StoreCMod}");
-            //Console.WriteLine($"Actual value: {actualStoreC}");
+            Console.WriteLine($"CountSketch esimate: Four: {StoreCFour}.");
+            Console.WriteLine($"Actual value: {actualStoreC}");
             #endregion
-
 
 
         }

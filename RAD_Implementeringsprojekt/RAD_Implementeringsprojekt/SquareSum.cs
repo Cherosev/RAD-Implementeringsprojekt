@@ -22,7 +22,7 @@ namespace RAD_Implementeringsprojekt
                 if (linkedList == null) continue;
                 foreach(var keypair in linkedList)
                 {
-                    sum += (ulong) BigInteger.Pow(keypair.Item2, 2);
+                    sum += (ulong)BigInteger.Pow(keypair.Item2, 2);
                 }
             }
 
