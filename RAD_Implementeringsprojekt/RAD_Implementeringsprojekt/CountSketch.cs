@@ -12,7 +12,6 @@ namespace RAD_Implementeringsprojekt
         public static long CountSketchEstimate(IEnumerable<Tuple<ulong, int>> stream, Hashing hashScheme)
         {
             ulong k = (ulong)Math.Pow(2, hashScheme.l_value);
-            Console.WriteLine($"Estimate array: {k}");
             long[] C = new long[k];
 
             foreach (var pair in stream)

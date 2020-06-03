@@ -29,9 +29,6 @@ namespace RAD_Implementeringsprojekt
         public BigInteger a_2;
         public BigInteger a_3;
 
-        public ulong a;
-        public ulong b;
-
         public delegate ulong hashFunctionDelegate(ulong x);
         public hashFunctionDelegate h;
 
@@ -61,12 +58,6 @@ namespace RAD_Implementeringsprojekt
                     a_1 = getRandomBigDigInt();
                     a_2 = getRandomBigDigInt();
                     a_3 = getRandomBigDigInt();
-                    if (a_0 < 0) Console.WriteLine("a_0 is < 0");
-                    if (a_1 < 0) Console.WriteLine("a_1 is < 0");
-                    if (a_2 < 0) Console.WriteLine("a_2 is < 0");
-                    if (a_3 < 0) Console.WriteLine("a_3 is < 0");
-
-                    //l_squared = (ulong)BigInteger.Pow(2, l); // l is < 64
                     h = fourUniversal; 
                     break;
                 default:

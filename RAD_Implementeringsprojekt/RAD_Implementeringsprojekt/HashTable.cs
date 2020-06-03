@@ -111,14 +111,14 @@ namespace RAD_Implementeringsprojekt {
             list.AddLast((x, d));
         }
 
-        public void hashKeysTimeTest(IEnumerable<Tuple<ulong, int>> stream)
+        public BigInteger hashKeysTimeTest(IEnumerable<Tuple<ulong, int>> stream)
         {
             BigInteger hashSum = 0;
             foreach(var x in stream)
             {
                 hashSum += hashScheme.h(x.Item1);
             }
-            Console.WriteLine($"Sum of hashed vals: {hashSum}");
+            return hashSum;
         }
 
         
